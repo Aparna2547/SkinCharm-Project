@@ -1,0 +1,168 @@
+<%- include("./head.ejs") -%>
+
+    <%- include("./header.ejs") -%>
+
+
+
+
+        <!-- Shop Section Begin -->
+        <section class="shop spad" style="background-color: #f3f3f3;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="shop__sidebar ">
+                         
+                            <div class="shop__sidebar__accordion mt-5">
+                                <form class="accordion bg-white p-3" id="accordionExample">
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
+                                        </div>
+                                        <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+
+                                            <div class="container">
+                                                <div class="row">
+                                                    <%category.forEach(cat=>{ %>
+                                                        <div class="col-md-12 d-flex align-items-center">
+                                                            <input type="checkbox" <%= categoryToFront.includes(cat.category) && 'checked'%> name="category" value="<%=cat.category%>">
+                                                            <p class="fs-7 ms-1 fw-bold " style="text-transform: capitalize;">
+                                                                <%= cat.category %>
+                                                            </p>
+                                                        </div>
+                                                    <%})%>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#collapseTwo">Branding</a>
+                                        </div>
+                                        <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
+                                            <div class="container">
+                                                <div class="row">
+
+                                                    <%brands.forEach(brand=>{ %>
+                                                        <div class="col-md-12 d-flex align-items-center">
+                                                            <input <%=brandsToFront.includes(brand) && 'checked'  %> type="checkbox" name="brand" value="<%=brand%>">
+                                                            <p class="fs-7 ms-1 fw-bold" style="text-transform: capitalize;">
+                                                                <%=brand %>
+                                                            </p>
+                                                        </div>
+                                                    <%})%>
+                                                  
+                                                </div>
+                                            </div>
+                                       
+                                        </div>
+                                    </div>
+                                  
+                                    <input type="hidden" value="<%= search %>" name="search" hidden>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                    <button class="btn text-white ls fw-bold w-100" style="background-color: #c70261;">FILTER</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="shop__product__option">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-2">
+                            <div class="dropdown">
+                                <button class="btn btn-light border border-2 dropdown-toggle w-100 d-flex align-items-center" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                 Sorted by : <p class="fw-bold ms-1"><%if(sortToFront == 1){ %> Price: Low To High <% }else if(sortToFront==-1){%>Price: High To Low <%}else{ %>Newest First <% } %></p>
+
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                  <li><a class="dropdown-item page-item" data-sort-by="1" href="#">Price: Low To High</a></li>
+                                  <li><a class="dropdown-item page-item" data-sort-by="-1" href="#">Price: High To Low</a></li>
+                                </ul>
+                              </div>
+                        </div>
+
+
+
+
+                        <div class="row">
+                            
+                            <% products.forEach((product)=>{ %>
+                                <div class="col-lg-4 col-md-6 col-sm-6">
+                                    <div class="product__item p-2" style="background-color: white;min-height: 22rem;">
+                                        <div class="product__item__pic set-bg" data-setbg="img/product/product-2.jpg">
+                                            <ul class="product__hover">
+                                                <li><a href="/singleProductpage?id=<%=product.id %>"><img
+                                                            class="img-fluid"
+                                                            src="/images/<%= product.image[0]?.filename %>"
+                                                            alt="image"></a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="product__item__text  mt-5 mt-lg-0">
+                                            <h6>
+                                                <%= product.productname %>
+                                            </h6>
+                                            <!-- <a href="#" class="add-cart m-1">+ Add To Cart</a> -->
+                                            <p class="my-2 fs-7  fw-bold"><strike class="text-muted">₹
+                                                    <%=product.actualPrice %>
+                                                </strike> ₹<%= product.sellingPrice %>
+                                            </p>
+                                        </div>
+
+
+                                      
+    
+   
+                                        <button class="btn border w-100 fw-bold product-btns toWishlist
+                                        <% if(productIdsAsString.includes(product._id.toString())){ %> disabled btn-dark <% } %>"
+                                        data-item-id="<%= product._id %>">
+                                        <% if(productIdsAsString.includes(product._id.toString())){ %> 
+                                          WISHLISTED </i> 
+                                        <% } else { %>
+                                          WISHLIST </i>
+                                        <% } %>
+                                      </button>
+                                                                             
+                                        <!-- <a href="/addToWishlist?productId=<%= product._id%>" id="wishlistId" class="btn ls fw-bold w-100 text-white" class="btn fw-bold disabled text-white py-2" style="font-size:1rem; background-color:#c70261; height:3rem; width:10rem; ">WISHLIST</a> -->
+                                       
+
+                                        
+                                        <!-- <a href="#" data-product-id="<%= product._id %>"
+                                            class="btn ls fw-bold w-100 text-white add-to-wishlist py-2"
+                                            style="font-size: 1rem; background-color: #c70261; height: 3rem; width: 10rem;">WISHLIST</a> -->
+
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+
+                        
+                        <div>
+                            <ul class="d-flex justify-content-center align-items-center">
+                             <li class="p-2 border border-2" <% if(page<=1){ %>style="pointer-events: none;"<%} %> ><a href="#"  data-page-no=<%=page-1%> class="page-item text-dark fw-bold"><</a></li>
+                             <li class="p-2 border border-2"><a href="#" data-page-no=<%= page %> class="page-item text-dark fw-bold"><%=page%></a></li>
+                             <li class="p-2 border border-2" <% if(page>=totalPages){ %>style="pointer-events: none;"<%} %>><a href="#" data-page-no=<%= parseInt(page)+1%> class="page-item text-dark fw-bold">></a></li>
+                            </ul>
+                         </div>
+                    </div>
+                </div>
+            </div>
+          
+        </section>
+        <!-- Shop Section End -->
+
+
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="/user/js/addtoWishlist.js"></script>
+
+
+        <%- include("./footer.ejs") -%>

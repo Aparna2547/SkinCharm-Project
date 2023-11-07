@@ -1,0 +1,120 @@
+<%- include('./head.ejs') %>
+    <link rel="stylesheet" href="/user/css/orderDetails.css">
+    <title>Document</title>
+</head>
+<body>
+ 
+    <main class="container mt-5" style="min-height: 100vh;">
+        <div class="container-fluid">
+            <div class="row p-2 border border-secondary">
+               <div class="col-md-4 py-4">
+                    <h6 class="fw-bold mb-2">Delivey Address</h6>
+                    <% if(orderFound){ %>
+                    <p class="fw-bold"><%= orderFound.address.name %></p>
+                    <p><%= orderFound.address.address %>, <%= orderFound.address.locality %></p>
+                    <p><%= orderFound.address.district %>, <%= orderFound.address.state %>-<%= orderFound.address.pincode %></p>
+                    <p class="fw-bold mt-2">Mobile Number : <%= orderFound.address.mobile %></p>
+               </div>
+               <% } %>
+               <div class="col-md-4 py-4">
+                  
+               </div>
+               <div class="col-md-4 py-4">
+                    <h6 class="fw-bold">More actions</h6>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <p><i class="fa-solid fa-file-invoice" style="color: #677472;"></i> Download Invoice</p>
+                        <button class="btn btn-sm btn-secondary px-3 fw-bold">Download</button>
+                    </div>
+               </div>
+            </div>
+            <div class="row p-2 mt-4 border border-secondary">
+                <% if(orderFound){ %>
+                <div class="col-md-4 d-flex px-0 py-4">
+                    <div class="me-2 img-fluid">
+                        <a href="/singleProductpage?id=<%= orderFound.product_id._id %>">
+                            <img class="img-fluid" style="height: 7rem;" src="/images/<%= orderFound.product_id.image[0].filename %>" alt="">
+                          </a>                 
+                    </div>
+                    <div>
+                        <h6 class="fw-bold"><%= orderFound.product_id.brand %></h6>
+                        <p><%= orderFound.product_id.productname  %></p>
+                        <div class="d-flex fw-bold">
+                            <p>Quantity : <%= orderFound.count %></p>
+                        </div>
+                        <% if(orderFound.price === 0){%>
+                            <h5><b>Rs <%=orderFound.walletUsed%></b></h5>
+                        <%}else{%>   
+                            <h5><b>Rs <%=orderFound.price%></b></h5>
+                        <%} %>    
+                    </div>
+                </div>
+                <div class="row col-md-5 img-fluid align-items-center py-4">
+                    <div class="col-md-12 col-12">
+                        <div>
+                            <div class="mt-1">
+                                <%const date = new Date(orderFound.orderDate);%>
+                                <%const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                                const formattedDate = date.toLocaleDateString('en-US', options); %>
+                                <%let status,barStatus
+                                switch (orderFound.orderStatus) {
+                                   case 1: 
+                                       status = 'Confirmed'
+                                       barStatus = 'fill-1'
+                                       break;
+                                   case 2:
+                                       status = 'Shipped'
+                                       barStatus = 'fill-2'
+                                       break;
+                                   case 3:
+                                       status= 'Out for delivery'
+                                       barStatus = 'fill-3'
+                                       break;
+                                   case 4:
+                                       status= 'Delivered'
+                                       barStatus = 'fill-4'
+                                       break;
+                                   case 5:
+                                       status= 'Cancelled'
+                                       break;
+                                   case 6:
+                                       status= 'Cancelled by Admin'
+                                       break;            
+                                   default:
+                                       break;
+                               } %>
+                                
+                            </div>
+                            <% if(orderFound.orderStatus < 5){%>
+                            <div class="d-flex justify-content-between order-status-text">
+                                <p <%if(orderFound.orderStatus >= 1){%>class="fw-bold"<%} %>>Confirmed</p>
+                                <p <%if(orderFound.orderStatus >= 2){%>class="fw-bold"<%} %>>Shipped</p>
+                                <p <%if(orderFound.orderStatus >= 3){%>class="fw-bold"<%} %>>Out for delivery</p>
+                                <p <%if(orderFound.orderStatus >= 4){%>class="fw-bold"<%} %>>Delivered</p>
+                            </div>
+                            <div class="d-flex justify-content-center my-1 px-4">
+                                <div class="container-new w-100">
+                                    <div class="filling-div <%= barStatus %>"></div>
+                                </div>
+                            </div>
+                            <%} %>
+                            <div class="d-flex justify-content-center order-status-text fw-bold">
+                                <h6 class="fw-bold <% if(orderFound.orderStatus >= 5){%>text-danger<%} %>"><%=status %> on <%= formattedDate %></h6>
+                            </div>
+                        </div>
+                        <% if(orderFound.orderStatus < 5){%>
+                        <div class="d-flex justify-content-center mt-2 fw-bold">
+                            <p>Payment Type : <%= orderFound.paymentMethode  %></p>
+                        </div>
+                        <%} %>
+                    </div>
+                </div>
+                <div class="row col-md-3 align-items-center text-center py-4 d-flex">
+                    <p class="fw-bold"><i class="fas-solid fa-star" style="color: #b0b0b0;"></i> Rate & Review Product </p>
+                   
+   
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+    <%- include('./footer.ejs') %>

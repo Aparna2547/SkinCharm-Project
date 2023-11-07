@@ -1,0 +1,67 @@
+<%- include("../admin/header.ejs") %>
+<style>
+  @media print {
+      #printButton {
+          display: none;
+      }
+}
+</style>
+<section class="container-fluid">
+    <div class="m-3">
+        <h1>SALES REPORT</h1>
+      <div class="d-flex justify-content-between align-items-end">
+        <%const date1 = new Date(startDate);%>
+        <%const options1 = { month: 'short', day: 'numeric', year: 'numeric' };
+        const startingDate = date1.toLocaleDateString('en-US', options1); %> 
+        
+        <%const date2 = new Date(endDate);%>
+        <%const options2 = { month: 'short', day: 'numeric', year: 'numeric' };
+        const endingDate = date2.toLocaleDateString('en-US', options2); %> 
+
+        <h5 class="p-0 fw-bold">From: <%= startingDate %>  To: <%= endingDate %></h5>
+        <button class="btn btn-secondary" id="printButton">Print Report</button>
+      </div>
+
+    </div>
+    <div class="container-fluid">
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Date</th>
+                <th scope="col">Name</th>
+                <th scope="col">OrderId</th>
+                <th scope="col">Payment Method</th>
+                <th scope="col">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% sales.forEach((sale,index)=>{ %>
+                  <%const date = new Date(sale.date);%>
+                  <%const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                  const formattedDate = date.toLocaleDateString('en-US', options); %> 
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= formattedDate %></td>
+                <td><%= sale.userName %></td>
+                <td>ORD<%= sale._id %></td>
+                <td><%= sale.paymentMethod %></td>
+                <td>₹<%= sale.amount %></td>
+              </tr>
+              <%}) %>
+             
+            </tbody>
+          </table>
+    </div>
+</section>
+<script>
+  // Get the print button element
+  const printButton = document.getElementById('printButton');
+
+  // Add a click event listener to the print button
+  printButton.addEventListener('click', () => {
+  // Call the browser's print function
+  window.print();
+  });
+</script>
+<%- include("../admin/footerpage.ejs") %>

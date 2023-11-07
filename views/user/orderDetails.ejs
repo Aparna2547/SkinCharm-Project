@@ -1,0 +1,110 @@
+<%- include('./head.ejs') %>
+    <%- include('./header.ejs') %>
+
+
+        <main style="min-height: 90vh;" class="container  d-flex justify-content-center align-items-center">
+            <section class="w-100">
+
+                <h2 class="mb-1">Order Details</h2>
+                <div class="table-data mt-0 row" style="border: 2px solid grey;">
+                    <div class="col-6 p-3">
+                        <h5>Delivery <Address></Address></h5>
+                        <% if(orderFound){ %>
+
+                            <div class="mx-0 col-6">
+                                <p class="fw-bold mb-0">
+                                    <%=orderFound.address.name %>
+                                </p>
+                                <p class="mb-0">
+                                    <%=orderFound.address.address%>,<%=orderFound.address.locality%>,
+                                            <%=orderFound.address.city%><br><%=orderFound.address.state%>-
+                                                    <%=orderFound.address.pincode%>
+                                </p>
+                                <p class="fw-bold mb-0">Mobile Number:
+                                    <%=orderFound.address.phone%>
+                                </p>
+                            </div>
+                            <% } %>
+                    </div>
+                    <div class="col-6 mt-5">
+                        <!-- <p class="fs-6 fw-bold">Download invoice &nbsp;</p>
+                                    <button class="fs-download btn btn-primary">
+                                     download
+                                    </button> -->
+                    </div>
+
+
+
+
+                </div>
+                
+
+                <div class="table-data m-3">
+                    <div class="order bg-gradient">
+                        <div class="p-3  row" style="border: 2px solid grey;">
+                            <% if (orderFound) { %>
+                                
+                                <!--  -->
+                                <div class="col-4">
+                                    <h6 class="fw-bold mb-0">
+                                        <%= orderFound.product_id.productname %>
+                                    </h6>
+                                    <h6 class="fw-bold mb-0 fs-6">Quantity: <%= orderFound.count %>
+                                    </h6>
+                                    <h6 class="fw-bold mb-0">RS: ₹<%= orderFound.count * orderFound.price %>
+                                    </h6>
+
+                                    <%const date = new Date(orderFound.orderDate);%>
+                                    <%const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                                    const formattedDate = date.toLocaleDateString('en-US', options); %>
+                                    <% 
+                                    var status
+                                        switch (orderFound.orderStatus) {
+                                            case 1:
+                                                status = "Confirmed"
+                                                break;
+                                            case 2:
+                                                status = "Shipped"
+                                                break;
+                                            case 3:
+                                                status = "Out for delivery"
+                                                break
+                                            case 4:
+                                                status = "Delivered"
+                                                break;
+                                            case 5:
+                                                status = "Cancelled"
+                                                break;
+                                            case 6:
+                                                status = "Cancelled by admin"
+                                            default:
+                                                break;
+                                        }
+                                    %>
+                                    </p>
+                                </div>
+                                <div class="col-4">
+                                    <h5  class="card-text fw-bold <%=orderFound.orderStatus >4 && 'text-danger'  %>" >  <b class="text-center" style="text-align:center;">  <%= status %> on <%=formattedDate  %></b> </h5>
+                                    <h5 class="card-text fw-bold"> payment type:&nbsp;&nbsp;<%=orderFound.payment%></h5>
+                                </div>
+                                
+                                <div class="col-4">
+                                    <!-- <h5><i class="fa fa-star"> Review</h6> -->
+                                </div>
+
+                                <% } else { %>
+                                    <p>No items found in the order.</p>
+                                    <% } %>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+
+
+                <!-- </main> -->
+                <!-- MAIN -->
+            </section>
+        </main>
+
+        <%- include('./footer.ejs') %>
