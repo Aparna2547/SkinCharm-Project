@@ -3,6 +3,7 @@ const Address = require("../model/addressModel");
 const User = require("../model/userModel");
 const Cart = require("../model/cartModel");
 const Order = require("../model/orderModel");
+const Coupon = require("../model/couponModel")
 const session = require("express-session");
 const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
@@ -65,6 +66,14 @@ exports.orderPlace = async (req, res) => {
       { user },
       { address: { $elemMatch: { _id: address } } }
     );
+
+
+    //let taking coupon amount for 
+    let amount = 0
+    let couponFound  = await Cart.findOne({isCouponApplied:true})
+    console.log(couponFound);
+
+
     const cartData = await Cart.findOne({ user });
     const cart = cartData.product;
     // console.log("cart details" + cart[0].product_id);
@@ -211,6 +220,9 @@ exports.verifyPayment = async (req, res) => {
       { user },
       { address: { $elemMatch: { _id: address } } }
     );
+
+
+    
 
     //verifying payment is confirmed or not
     let hmac = crypto.createHmac("sha256", RAZORPAY_SECRET_KEY);
@@ -548,25 +560,33 @@ exports.loadCheckOut = async (req, res, next) => {
         cartCount = cart.product.length;
       }
     }
-    const cartData = await Cart.findOne({ user }).populate(
-      "product.product_id"
-    );
+    
     const addressData = await Address.findOne({ user });
-    let subTotal = cartData?.product.reduce((acc, item) => {
-      const totalItem = item.price * item.count;
-      return acc + totalItem;
-    }, 0);
+    const cartData = await Cart.findOne({user}).populate('product.product_id')
+    // console.log(cartData);
+    let subTotal = cartData?.product.reduce((acc,item)=>{
+        const totalItem = item.price * item.count;
+        return acc + totalItem
+    },0)
+    
+    //coupon
+     const coupons = await Coupon.find({})
+    // console.log('coupons',coupons);
+    let  total;
+   
+    const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
+    console.log('couponFound',couponFound);
+    if(couponFound){
+        total =subTotal- couponFound.maximumDiscount
+    }else{
+        total = subTotal
+    }
 
     if (walletApplied) {
       subTotal = 0;
     }
 
-    //reducing walet amount
-
-    // const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
-    // if(couponFound){
-    //     total =subTotal- couponFound.maximumDiscount
-    // }
+  
 
     res.render("checkout", {
       addressData,
@@ -574,6 +594,7 @@ exports.loadCheckOut = async (req, res, next) => {
       cartCount,
       walletAmount,
       walletApplied,
+      total
     });
   } catch (error) {
     console.log(error);
@@ -597,10 +618,10 @@ exports.applyWallet = async (req, res) => {
     if (action == "USE") {
       console.log(user);
       await User.findByIdAndUpdate(user, { $set: { walletApplied: true } });
-      res.json({ success: true, message: "wallet applied", subTotal });
+      res.json({ success: true, message: "wallet applied", total });
     } else if (action == "REMOVE") {
       await User.findByIdAndUpdate(user, { $set: { walletApplied: false } });
-      res.json({ success: true, message: "wallet removed", subTotal });
+      res.json({ success: true, message: "wallet removed", total });
     }
   } catch (error) {
     console.log(error);

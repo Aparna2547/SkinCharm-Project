@@ -15,13 +15,7 @@
                                 <h4> Select a payment method</h4>
                                 <div class="col-lg-4 me-0 border shadow mt-4 p-4 w-50">
                                       
-                                    <!-- <form action="/checkOut" method="POST" id="checkoutForm">
-                                        <input type="radio" id="cod"  <%=  'checked'  %> name="payment" value="cash">
-                                        <label for="cod" class="fw-bold">Cash on Delivery</label><br>
-                                        <input type="radio" id="onp" name="payment" value="online">
-                                        <label for="onp"  class="fw-bold">Online payment</label><br>
-                                        <button type="submit" class="btn w-100 fw-bold text-white ls mt-3" style="background-color:#c70261;">PLACE ORDER</button>
-                                    </form> -->
+                                 
                                     
                                      <form  class="checkoutForm">
                                         <input type="radio" data-pay-type="cash" id="cod" <%=!walletApplied && 'checked'%> <%=walletApplied && 'disabled' %> name="payment" value="cash">
@@ -53,6 +47,8 @@
                                 <ul>
                                     <li  class="fw-bold">Subtotal <span id="subTotal"><%=subTotal %></span></li>
                                     <hr>
+                                    <li  class="fw-bold">Total <span id="total"><%=total %></span></li>
+
                                     <li></li>
                                 </ul>
                                 <% if(subTotal == 0){ %>

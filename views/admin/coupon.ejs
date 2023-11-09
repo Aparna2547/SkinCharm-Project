@@ -160,7 +160,7 @@
                                         <%= expiryDate.toLocaleDateString('en-US', options) %> </td>
                                     <td><a  href="/admin/editCoupon?_id=<%= item._id %>" class="btn btn-primary mx-2">edit</a>
                                         <!-- <a href="/admin/deleteCoupon?_id=<%= item._id %>" class="btn btn-primary">hide</a></td> -->
-                                         <a class="btn  <%= item.showStatus ? 'btn-danger' : 'btn-primary' %>"
+                                         <a class="btn  <%= item.showStatus ? 'btn-primary' : 'btn-danger' %>"
                                             href="/admin/deleteCoupon?_id=<%= item._id %>" data-toggle="modal"
                                             data-target="#confirmationModal<%= item._id%>">
                                             <%= item.showStatus ? 'view' : 'hide' %>
@@ -188,8 +188,8 @@
                                                     <button type="button" class="btn btn-secondary"
                                                         data-dismiss="modal">Close</button>
                                                     <!-- Add your action button (Block/Unblock) here -->
-                                                    <a class="btn <%= item.showStatus ? 'btn-danger' : 'btn-primary' %>"
-                                                        href="/admin/deleteCoupon?id=<%= item._id%>">
+                                                    <a class="btn <%= item.showStatus ? 'btn-primary' : 'btn-danger' %>"
+                                                        href="/admin/deleteCoupon?_id=<%= item._id%>">
                                                         <%= item.showStatus ? 'view' : 'hide' %>
                                                     </a>
                                                 </div>

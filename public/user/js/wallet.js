@@ -10,7 +10,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(data){
                 if(data.success == true){
-                        let lastAmount = data.subTotal-walletAmount;
+                        let lastAmount = data.total-walletAmount;
                     if(lastAmount < 0){
                         lastAmount = 0
                     }

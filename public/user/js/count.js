@@ -8,6 +8,7 @@ $(document).ready(function (){
         const messageInput = document.getElementById(`warning-${itemId}`)
         const totalPriceInput = document.getElementById(`totalPrice-${itemId}`) 
         const totalPrice = document.getElementById('subTotal')
+        const price = document.getElementById('total')
         let count = parseInt(countInput.textContent)
 
         $.ajax({
@@ -25,6 +26,7 @@ $(document).ready(function (){
                     countInput.textContent = ++count
                     totalPriceInput.textContent = `₹${count * data.price}`
                     totalPrice.textContent =  `₹${data.total}`
+                    price.textContent = `₹${data.total}`
                 }
                 else if(data.status === 'minus'){
                     countInput.textContent = --count;

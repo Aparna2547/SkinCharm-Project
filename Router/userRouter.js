@@ -93,8 +93,9 @@ userRoute.post('/changeCount',cartController.changeCount)
 userRoute.get('/cartDelete',cartController.cartDelete)
 
 //coupon apply
-userRoute.post('/getCoupon',userAuth.isLogin,couponController.getCoupon)
-
+userRoute.post('/applyCoupon',userAuth.isLogin,couponController.getCoupon)
+//remove coupon
+userRoute.get('/removeCoupon',userAuth.isLogin,couponController.removeCoupon)
 
 //shippingaddress in cart side
 userRoute.get('/shippingAddress',userAuth.isLogin,addressController.shippingAddress)

@@ -5,7 +5,7 @@ const session = require('express-session')
 const Cart =  require('../model/cartModel');
 const Wishlist = require('../model/wishlistModel')
 const { singleProduct } = require("./usercontroller");
-const e = require("express");
+const express = require("express-session");
 const Coupon = require('../model/couponModel')
 
 exports.loadCart = async (req,res,next)=>{
@@ -17,16 +17,8 @@ exports.loadCart = async (req,res,next)=>{
 
         
         const user = req.session.userId
-        const cartData = await Cart.findOne({user}).populate('product.product_id')
-        // console.log(cartData);
-        let subTotal = cartData?.product.reduce((acc,item)=>{
-            const totalItem = item.price * item.count;
-            return acc + totalItem
-        },0)
 
-        
-  
-    //getting cart product count
+          //getting cart product count
     let cartCount = 0
     if (user) {
       const cart = await Cart.findOne({ user });
@@ -36,14 +28,20 @@ exports.loadCart = async (req,res,next)=>{
       }
     }
        
-
-
-    //coupon
+        const cartData = await Cart.findOne({user}).populate('product.product_id')
+        // console.log(cartData);
+        let subTotal = cartData?.product.reduce((acc,item)=>{
+            const totalItem = item.price * item.count;
+            return acc + totalItem
+        },0)
+        
+        //coupon
     const coupons = await Coupon.find({})
-        console.log(coupons)
+        // console.log('coupons',coupons);
+        let  total;
        
         const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
-        let total
+        console.log('couponFound',couponFound);
         if(couponFound){
             total =subTotal- couponFound.maximumDiscount
         }else{
@@ -57,6 +55,10 @@ exports.loadCart = async (req,res,next)=>{
         error(next);
     }
 }
+
+
+
+
 
 //add to cart
 exports.addToCart = async (req,res)=>{
@@ -163,6 +165,7 @@ exports.changeCount = async (req,res)=>{
 //deleting items in the cart
 exports.cartDelete = async (req,res,next)=>{
     try {
+        console.log("hii")
         const id = req.query.productId;
         console.log(id)
         const product = await Product.findOne({_id:id})

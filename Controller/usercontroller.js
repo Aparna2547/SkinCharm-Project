@@ -504,12 +504,9 @@ exports.singleProduct = async (req, res, next) => {
 
     const id = req.query.id;
     let productFound, wishlistFound;
-
     //fnding the product if it is in cart
     if (user) {
-
-
-      productFound = await Cart.findOne(
+   productFound = await Cart.findOne(
         { user },
         { product: { $elemMatch: { product_id: id } } }
       );
@@ -527,17 +524,24 @@ exports.singleProduct = async (req, res, next) => {
     const singleProduct = await Product.findById(id).populate(
       "category"
     );
-
-
     //  console.log("singleproduct data"+singleProduct);
 
     //for displaying related product
      const selectedCategory = singleProduct.category._id;
      console.log("selectedCategory",selectedCategory);
  
-     const similarProduct = await Product.find({category:selectedCategory}).limit(4)
-     console.log("related product",similarProduct);
+const similarProduct = await Product.find({
+  category: selectedCategory,
+  _id: { $ne: singleProduct._id } // Exclude the current product
+}).limit(4);
+console.log("related products", similarProduct);
 
+console.log('id',singleProduct._id)
+//review
+const review = await Review
+  .find({ product_id: singleProduct._id })
+  .populate('reviews.user_id'); // Use 'reviews.user_id' to populate the user details
+console.log('reviews',review);
 
     if (singleProduct) {
       res.render("singleproduct", {
@@ -545,7 +549,8 @@ exports.singleProduct = async (req, res, next) => {
         productFound,
         wishlistFound,
         cartCount,
-        similarProduct
+        similarProduct,
+        review
       });
     }
   } catch (error) {

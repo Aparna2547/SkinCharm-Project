@@ -64,10 +64,10 @@
                                     <!-- <td class="cart__close" ><a href="/cartDelete?productId=<%=data.product_id._id %> "onclick="return alertMessage();"><i class="fa fa-trash-o" style="font-size:24px"></i></a></td> -->
                                     <td class="cart__close"> <a 
                                         href="/cartDelete?productId=<%=data.product_id._id %> " data-toggle="modal"
-                                        data-target="#confirmationModal">
+                                        data-target="#confirmationModal<%= data.product_id._id %>">
                                         <i class="fa fa-trash-o" style="font-size:24px"></i> </a></td>
                                 <!-- Modal -->
-                                <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
+                                <div class="modal fade" id="confirmationModal<%= data.product_id._id %>" tabindex="-1" role="dialog"
                                     aria-labelledby="confirmationModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
@@ -82,6 +82,7 @@
                                             <div class="modal-body">
                                                 <!-- Add confirmation message or content here -->
                                                 Are you sure you want to delete from cart?
+                                               
                                                     
                                             </div>
                                             <div class="modal-footer">
@@ -89,7 +90,7 @@
                                                     data-dismiss="modal">Close</button>
                                                 <!-- Add your action button (Block/Unblock) here -->
                                                 <a class="btn"
-                                                    href="/cartDelete?productId=<%=data.product_id._id %> ">
+                                                    href="/cartDelete?productId=<%=data.product_id._id  %> ">
                                                    Delete
                                                 </a>
                                             </div>
@@ -98,6 +99,7 @@
                                 </div>
 
                                 </tr>
+                                
                                 <%}) } %>
                              </tbody>
                         </table>
@@ -114,15 +116,21 @@
                 <div class="col-lg-4">
                     <h5 class="fw-bold">Coupon</h5>
                     <div class="cart__discount d-flex">
-                        
-                            <form action="/getCoupon" method="post" class="w-100">
-                            <input type="text" placeholder="Coupon code" name="coupon" class="form-control w-75">
-                            <button type="submit" style="background-color: #E80071;" class="form-control w-25 text-white ">Apply</button>
+                        <% if(couponFound){ %>
+                            <div class="form-control"><%=couponFound.couponName%>
+                            </div>
+                            <button id="couponRemove" onclick="removeCoupon()"> <i class="fa fa-trash-o" style="font-size:24px"></i> </button>
+                            <% }else{ %>
+                        <form id="couponApply" class="w-100">
+                            <!-- <form action="/applyCoupon" method="post"> -->
+                            <input type="text" id="couponInput" placeholder="Coupon code" name="coupon" class="form-control w-75">
+                            <button type="submit" id="couponApplybtn" style="background-color: #E80071;" class="form-control w-25 text-white ">Apply</button>
                         </form>
+                        <% } %>
                     </div>
                     
-                    <div class="border border-1 p-1" style="overflow: auto;max-height: 300px;">
-                        <% if(couponFound){ %>
+                    <div class="border border-1 p-1 mt-4" style="overflow: auto;max-height: 300px;">
+                 
                        <% coupons.forEach((coupon)=>{ %> 
                         <div class="border border-2 p-2 mt-1">
                             <p class="fw-bold"><%=coupon.couponName%></p>
@@ -132,13 +140,15 @@
                                 <% const options = { month: 'short', day: 'numeric', year: 'numeric' }; %>
                                 <%= expiryDate.toLocaleDateString('en-US', options) %> </p>
                         </div>
-                        <% }) }%>
+                        <% }) %>
                     </div>
                     <div class="cart__total mb-2">
                         <h6 class="text-center  mb-2">Cart total</h6>
                         <ul>
                             <li  class="fw-bold">Subtotal <span id="subTotal">₹<%=subTotal %></span></li>
                             <hr>
+                            <li class="fw-bold">Total <span id="total">₹<%=total %></span></li>
+                           
                             <li></li>
                         </ul>
                         <a href="/shippingAddress" class="primary-btn text-decoration-none text-white" style="background-color: #E80071;">Proceed to checkout</a>
@@ -149,6 +159,8 @@
     </section>
     <% } %>
     <!-- Shopping Cart Section End -->
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/user/js/removeCoupon.js"></script>
+<script src="/user/js/couponApply.js"></script>
    
     <%- include('./footer.ejs') %>

@@ -21,9 +21,20 @@ exports.addReview = async(req,res)=>{
         const user = req.session.userId;
         const rating = req.body.rating;
         const review = req.body.review;
-        const productId = req.body.product_id; // Use req.query to get the 'id' parameter from the URL
+        const productId = req.query.id; // Use req.query to get the 'id' parameter from the URL
         console.log(productId);
-      
+        const data = new Review({
+         product_id:productId,
+          reviews:[{
+            user_id:user,
+            rating:rating,
+            review : review,
+            date : new Date()
+          }]
+        })
+        await data.save();
+        console.log("review added..");
+        res.redirect(`/singleProductpage?id=${productId}`)
     } catch (error) {
       console.log(error.message);
     }

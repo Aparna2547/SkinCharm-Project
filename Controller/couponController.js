@@ -11,7 +11,7 @@ exports.loadCouponPage = async (req,res) =>{
     var context = req.app.locals.specialcontext;
     req.app.locals.specialcontext = null;
 
-    const data = await Coupon.find({})
+    const data = await Coupon.find({showStatus:true})
     console.log(data);
         res.render("admin/coupon",{data})
     } catch (error) {
@@ -60,7 +60,6 @@ exports.editCoupon = async (req,res)=>{
         console.log(id);
         const {couponname,minimumPurchase,maximumDiscount,expiryDate} = req.body;
         console.log(couponname,minimumPurchase,maximumDiscount,expiryDate);
-
         await Coupon.updateOne({_id:id},{
             $set:{
                 couponName: couponname,
@@ -80,7 +79,6 @@ exports.editCoupon = async (req,res)=>{
 exports.deleteCoupon = async (req,res)=>{
     try {
         const id = req.query._id
-        console.log(id);
        const data =  await Coupon.findOne({_id:id})
       if(data.showStatus == true){
         await Coupon.updateOne({_id:id},{$set:{showStatus:false}})
@@ -88,50 +86,79 @@ exports.deleteCoupon = async (req,res)=>{
         await Coupon.updateOne({_id:id},{$set:{showStatus:true}})
       }
 
-       
-   
-
     } catch (error) {
         console.log(error);
     }
 }
 
-exports.getCoupon = async (req, res) => {
-    try {
+
+
+
+//USER SIDE
+
+
+//applu coupon
+exports.getCoupon = async (req,res)=>{
+    try{
         const user = req.session.userId;
-
-        // const getCart = await Cart.findOne({ user }).populate('product.product_id');
-        // const cart = getCart.product;
-        let totalAmount = 0;
-        let currentDate = new Date();
-
-        const cartData = await Cart.findOne({user}).populate('product.product_id')
-        // console.log(cartData);
+        const cartData = await Cart.findOne({user}).populate('product.product_id');
+        console.log(cartData );
         const cart = cartData.product;
-        const total = cartData?.product.reduce((acc,item)=>{
-            const totalItem = item.price * item.count;
-            return acc + totalItem
-        },0)
+        let totalAmount = 0,date= new Date();
+
+        totalAmount +=cartData?.product.reduce((acc,item)=>{
+                            const totalItem = item.price * item.count;
+                            return acc + totalItem
+                        },0)
+                        // console.log('totalAmount,',totalAmount);
 
 
+        //coupon
         const coupon = req.body.coupon;
         const couponFound = await Coupon.findOne({couponName:coupon})
-        if(couponFound){
-            if(couponFound.expiryDate < currentDate){
-                res.json({message:"coupon expired"})
-            }
-            else if(total<couponFound.minimumPurchase){
-                res.json({message:"minimum purchase required"})
-
+        console.log("coupon",coupon,'coponFound',couponFound);
+        
+        //checks if the coupon is already used by the user  
+        const usedUser = await Coupon.findOne({couponName:coupon,usedUser:{$in:[user]}})
+        console.log(usedUser);
+        if(couponFound.expiryDate < date){
+            res.json({message:'Coupon Expired'})
+        }
+        else if(usedUser){
+            res.json({message:'User already used the coupon'})
+        }
+        else if(couponFound){
+            if(totalAmount < couponFound.minimumPurchase){
+                res.json({message:'Less amount to apply'})
             }
             else{
-                await Cart.updateOne({user},{$set:{isCouponApplied:couponFound.couponName}})
+                await Cart.findOneAndUpdate({user},{$set:{isCouponApplied:coupon}})
+                totalAmount = totalAmount - couponFound.maximumDiscount
+                res.json({message:'Coupon applied',maxDiscount:couponFound.maximumDiscount,totalAmount})
+
+                await Coupon.updateOne({couponName:coupon},{$set:{usedUser:user}})
             }
-        }      
+        }
+        else{
+            res.json({message:'Invalid coupon'})
+        }
 
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+    }catch (error) {
+      console.error(error);
+//         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+//remove coupon
+exports.removeCoupon = async (req,res)=>{
+    try {
+        console.log("coupon remove");
+        const user = req.session.userId;
+        console.log(user);
+        await Cart.updateOne({user},{$set:{isCouponApplied:""}})
+        res.json({success:true})
+       // res.rediect('/cart')
+    } catch (error) {
+        console.log(error.message);
+    }
+}

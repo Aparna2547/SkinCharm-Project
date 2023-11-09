@@ -25,22 +25,29 @@ exports.shippingAddress = async (req,res,next)=>{
             cartCount = cart.product.length;
           }
         }
-        const cartData = await Cart.findOne({user}).populate('product.product_id')
         const addressData = await Address.findOne({user})
         // console.log(addressData);
+        const cartData = await Cart.findOne({user}).populate('product.product_id')
         // console.log(cartData);
         let subTotal = cartData?.product.reduce((acc,item)=>{
             const totalItem = item.price * item.count;
             return acc + totalItem
         },0)
-
+        
+        //coupon
+         const coupons = await Coupon.find({})
+        // console.log('coupons',coupons);
+        let  total;
        
-        // const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
-        // if(couponFound){
-        //     total =subTotal- couponFound.maximumDiscount
-        // }
+        const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
+        console.log('couponFound',couponFound);
+        if(couponFound){
+            total =subTotal- couponFound.maximumDiscount
+        }else{
+            total = subTotal
+        }
     
-        res.render('shippingAddress',{addressData,subTotal,cartCount})
+        res.render('shippingAddress',{addressData,subTotal,cartCount,total})
             
     } catch (error) {
         console.log(error);
