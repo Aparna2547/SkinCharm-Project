@@ -136,8 +136,41 @@ exports.LoadHome = async (req, res) => {
     let profit = (finalProfit*12)/100;
     console.log("cancelcash"+cancelcash);
 
-   
 
+    //bar graph
+    const bars = await Order.aggregate([
+      {
+          $unwind: "$orders"
+      },
+      {
+          $match: {
+              "orders.orderStatus": 4
+          }
+      },
+      {
+          $addFields: {
+              orderMonth: { $month: "$orders.orderDate" }
+          }
+      },
+      {
+          $group: {
+              _id: {
+                  month: "$orderMonth",
+                  year: { $year: "$orders.orderDate" }
+              },
+
+              totalPrice: { $sum: "$orders.price" },
+             
+          }
+      },
+      {
+          $sort: {
+              "_id.year": 1,
+              "_id.month": 1
+          }
+      }
+  ])
+console.log(bars);
 
     res.render("admin/home", {
       totalOrders: count,
@@ -148,7 +181,8 @@ exports.LoadHome = async (req, res) => {
       recentUser,
       finalProfit,
       profit,
-      cancelcash
+      cancelcash,
+      bars
     });
   } catch (error) {
     console.log(error);

@@ -27,6 +27,9 @@
             orderStatus:{
                 type:Number,
                 default : 1
+            },
+            coupon:{
+                type:String
             }
         }]
     })

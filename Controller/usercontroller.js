@@ -302,30 +302,6 @@ exports.verifyOtp = async (req, res) => {
   }
 };
 
-// //rendering home page
-// exports.LoadHome = async (req, res, next) => {
-//   try {
-//     const category = await Category.find({ isListed: true });
-//     const banner = await Banner.findOne({})
-//     const product = await Product.find({}).sort({addedDate:-1}).limit(9)
-                                                      
-//     const user = req.session.userId;
-//     console.log(user);
-//     let cartCount = 0;
-//     if (user) {
-//       const cart = await Cart.findOne({ user });
-//       // Assuming you want to calculate cartCount based on the user's cart items
-//       if (cart) {
-//         cartCount = cart.items.length;
-//       }
-//     }                                                                                                                                                                                                                                                                                                                                                           og("product 10",product);
-
-//     res.render("index", { category,banner,product});
-//   } catch (error) {
-//     console.log(error);
-//     next(error);
-//   }
-// };
 
 
 exports.LoadHome = async (req, res, next) => {
@@ -518,7 +494,7 @@ exports.singleProduct = async (req, res, next) => {
         { product: { $elemMatch: { product_id: id } } }
       );
     }
-    console.log(productFound);
+    // console.log(productFound);
 
     console.log("id of single page" + id);
     const singleProduct = await Product.findById(id).populate(
@@ -528,20 +504,22 @@ exports.singleProduct = async (req, res, next) => {
 
     //for displaying related product
      const selectedCategory = singleProduct.category._id;
-     console.log("selectedCategory",selectedCategory);
+    //  console.log("selectedCategory",selectedCategory);
  
 const similarProduct = await Product.find({
   category: selectedCategory,
   _id: { $ne: singleProduct._id } // Exclude the current product
 }).limit(4);
-console.log("related products", similarProduct);
+// console.log("related products", similarProduct);
 
-console.log('id',singleProduct._id)
+// console.log('id',singleProduct._id)
 //review
+console.log('singleP',singleProduct._id)
 const review = await Review
-  .find({ product_id: singleProduct._id })
-  .populate('reviews.user_id'); // Use 'reviews.user_id' to populate the user details
-console.log('reviews',review);
+  .findOne({ product_id: singleProduct._id })
+  .populate('reviews.user_id');   
+console.log('reviews', review);
+
 
     if (singleProduct) {
       res.render("singleproduct", {
@@ -550,7 +528,7 @@ console.log('reviews',review);
         wishlistFound,
         cartCount,
         similarProduct,
-        review
+        review,    
       });
     }
   } catch (error) {

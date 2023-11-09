@@ -202,6 +202,7 @@ userRoute.get('/cancelOrder',userAuth.isLogin,orderController.cancelOrder)
 userRoute.get('/wallet',userAuth.isLogin,orderController.loadWallet)
 
 //review
+userRoute.get('/addReview',userAuth.isLogin,reviewController.addReviewload)
 userRoute.post('/addReview',userAuth.isLogin,reviewController.addReview)
 
 //user logout

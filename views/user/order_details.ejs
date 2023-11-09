@@ -103,14 +103,15 @@
                         </div>
                         <% if(orderFound.orderStatus < 5){%>
                         <div class="d-flex justify-content-center mt-2 fw-bold">
-                            <p>Payment Type : <%= orderFound.paymentMethode  %></p>
+                            <p>Payment Type : <%= orderFound.payment %></p>
                         </div>
                         <%} %>
                     </div>
                 </div>
                 <div class="row col-md-3 align-items-center text-center py-4 d-flex">
-                    <p class="fw-bold"><i class="fas-solid fa-star" style="color: #b0b0b0;"></i> Rate & Review Product </p>
-                   
+                    <% if(orderFound.orderStatus  === 4){ %>
+                <a href="/addReview?id=<%=orderFound.product_id._id%>">   <p class="fw-bold"><i class="fas-solid fa-star" style="color: #b0b0b0;"></i> Rate & Review Product </p></a> 
+                   <% } %>
    
                 </div>
                 <% } %>

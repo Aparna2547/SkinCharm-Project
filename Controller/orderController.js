@@ -70,8 +70,6 @@ exports.orderPlace = async (req, res) => {
 
     //let taking coupon amount for 
     let amount = 0
-    let couponFound  = await Cart.findOne({isCouponApplied:true})
-    console.log(couponFound);
 
 
     const cartData = await Cart.findOne({ user });
@@ -89,6 +87,22 @@ exports.orderPlace = async (req, res) => {
       );
     }
 
+    //getting coupon divinding for each product
+    let amt =0
+    const coupon = cartData.isCouponApplied;
+    console.log('couponname',coupon);
+  const couponFound = await Coupon.findOne({couponName:coupon})
+  console.log(couponFound);
+  let Amt = couponFound.maximumDiscount;
+  console.log('Amount',Amt);
+  console.log('cart length',cart.length)
+    amt =Math.floor( Amt / cart.length);
+    console.log("divided amt",amt);
+
+
+
+
+
     // console.log(selectAddress);
     if (method.payment === "cash") {
       console.log("cash called..");
@@ -97,10 +111,11 @@ exports.orderPlace = async (req, res) => {
         let order = {
           product_id: cart[i].product_id,
           count: cart[i].count,
-          price: cart[i].price * cart[i].count,
+          price: (cart[i].price * cart[i].count) - amt,
           address: selectedAddress.address[0],
           payment: "Cash on delivery",
           orderStatus: 1,
+          coupon : coupon,
           orderDate: new Date(),
         };
         orderTopush.push(order);
@@ -153,11 +168,12 @@ exports.orderPlace = async (req, res) => {
         let order = {
           product_id: cart[i].product_id,
           count: cart[i].count,
-          price: cart[i].price * cart[i].count,
+          price: (cart[i].price * cart[i].count- amt),
           address: selectedAddress.address[0],
           payment: "Wallet",
           orderStatus: 1,
           orderDate: new Date(),
+          coupon : coupon
         };
         orderTopush.push(order);
 
@@ -297,7 +313,7 @@ exports.cancelOrder = async (req, res, next) => {
       { "orders.$": 1 }
     ).populate("orders.product_id");
 
-    console.log(order);
+    // console.log(order);
     let product = order.orders[0].product_id._id;
     let productCount = order.orders[0].count;
 
@@ -348,9 +364,9 @@ exports.loadWallet = async (req, res) => {
 
     //wallet
     let walletFound = await User.findById(user);
-    const wallet = walletFound.wallet;
+    // const wallet = walletFound.wallet;
     const walletHistory = walletFound.walletHistory;
-    console.log(walletHistory);
+    // console.log(walletHistory);
 
     // console.log(wall etFound);
     res.render("wallet", { cartCount, wallet, walletHistory });
@@ -437,7 +453,7 @@ exports.viewDetails = async (req, res, next) => {
 exports.ordersAndReturns = async (req, res, next) => {
   try {
     const user = req.session.userId;
-    console.log(user);
+    // console.log(user);
 
     //getting cart product count - badge
     let cartCount = 0;
@@ -506,7 +522,7 @@ exports.viewDetailsUser = async (req, res, next) => {
 
 
     const id = req.query.id;
-    console.log("id of the order: " + id);
+    // console.log("id of the order: " + id);
 
     // Finding the specific order
     const order = await Order.findOne(
@@ -517,7 +533,7 @@ exports.viewDetailsUser = async (req, res, next) => {
       { "orders.$": 1 }
     ).populate('orders.product_id');
 
-    console.log(order);
+    // console.log(order);
 
     if (!order) {
       // Handle the case where the order with the specified ID is not found
@@ -527,7 +543,7 @@ exports.viewDetailsUser = async (req, res, next) => {
     const orderFound = order.orders.find(
       (orderItem) => orderItem._id.toString() === id
     );
-    console.log("orderfound", orderFound);
+    // console.log("orderfound", orderFound);
 
     // Render the response or perform any other necessary actions
     res.render("order_details", { orderFound, cartCount });
