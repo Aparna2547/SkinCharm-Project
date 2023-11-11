@@ -88,16 +88,15 @@ exports.orderPlace = async (req, res) => {
     }
 
     //getting coupon divinding for each product
-    let amt =0
+    let couponAmount =0, couponAmountForOne=0
     const coupon = cartData.isCouponApplied;
     console.log('couponname',coupon);
-  const couponFound = await Coupon.findOne({couponName:coupon})
-  console.log(couponFound);
-  let Amt = couponFound.maximumDiscount;
-  console.log('Amount',Amt);
-  console.log('cart length',cart.length)
-    amt =Math.floor( Amt / cart.length);
-    console.log("divided amt",amt);
+    const couponFound = await Coupon.findOne({couponName:coupon})
+    if(couponFound){
+      couponAmount = couponFound.maximumDiscount;
+      couponAmountForOne = Math.floor( couponAmount / cart.length);
+    
+    }
 
 
 
@@ -111,7 +110,7 @@ exports.orderPlace = async (req, res) => {
         let order = {
           product_id: cart[i].product_id,
           count: cart[i].count,
-          price: (cart[i].price * cart[i].count) - amt,
+          price: (cart[i].price * cart[i].count) - couponAmount ,
           address: selectedAddress.address[0],
           payment: "Cash on delivery",
           orderStatus: 1,
@@ -130,21 +129,37 @@ exports.orderPlace = async (req, res) => {
       });
 
       await newOrder.save();
+    
+      if(couponFound){
+          //adding used coupon into user 
+          await Coupon.updateOne({couponName:coupon},{$set:{usedUser:user}})
+          await Cart.updateOne({user},{$set:{isCouponApplied:''}})
+
+      }
       // await Order.updateOne({ user }, { $push: { orders: order } });
       console.log("Order pushed...");
 
       await Cart.updateOne({ user }, { $set: { product: [] } });
       // res.redirect("/Delivery");
       res.json({ status: "CASH" });
-    } else if (method.payment === "online") {
+    } 
+    
+    
+    else if (method.payment === "online") {
       const cartData = await Cart.findOne({ user }).populate(
         "product.product_id"
       );
       // console.log(cartData);
-      const total = cartData?.product.reduce((acc, item) => {
+      let total = cartData?.product.reduce((acc, item) => {
         const totalItem = item.price * item.count;
         return acc + totalItem;
       }, 0);
+
+      total = total-couponAmount;
+
+
+
+
       var options = {
         amount: total * 100, // amount in the smallest currency unit
         currency: "INR",
@@ -158,7 +173,10 @@ exports.orderPlace = async (req, res) => {
           res.json({ status: "ONLINE", order: cart, order });
         }
       });
-    } else if (method.payment == "wallet") {
+    } 
+    
+    
+    else if (method.payment == "wallet") {
       console.log("wallet");
       const orderTopush = [];
 
@@ -168,7 +186,7 @@ exports.orderPlace = async (req, res) => {
         let order = {
           product_id: cart[i].product_id,
           count: cart[i].count,
-          price: (cart[i].price * cart[i].count- amt),
+          price: (cart[i].price * cart[i].count) - couponAmountForOne,
           address: selectedAddress.address[0],
           payment: "Wallet",
           orderStatus: 1,
@@ -176,6 +194,7 @@ exports.orderPlace = async (req, res) => {
           coupon : coupon
         };
         orderTopush.push(order);
+
 
         //reducing stock
         await Product.findByIdAndUpdate(cart[i].product_id, {
@@ -189,9 +208,18 @@ exports.orderPlace = async (req, res) => {
         user,
         orders: orderTopush,
       });
+      if(couponFound){
+        //adding used coupon into user 
+        await Coupon.updateOne({couponName:coupon},{$set:{usedUser:user}})
+        await Cart.updateOne({user},{$set:{isCouponApplied:''}})
+
+    }
 
       await newOrder.save();
       console.log(cartAmount);
+
+      //minus coupon amount
+      cartAmount -= couponAmount
 
       await User.findByIdAndUpdate(user, {
         $set: { walletApplied: false },
@@ -210,6 +238,9 @@ exports.orderPlace = async (req, res) => {
 
       res.json({ status: "WALLET" });
     }
+    
+     console.log('coupon inserted');
+
   } catch (error) {
     console.log(error.message);
   }
@@ -245,19 +276,33 @@ exports.verifyPayment = async (req, res) => {
     hmac.update(payment.razorpay_order_id + "|" + payment.razorpay_payment_id);
     hmac = hmac.digest("hex");
 
+
+    //getting coupon divinding for each product
+    let couponAmount =0, couponAmountForOne
+    const coupon = cartData.isCouponApplied;
+    console.log('couponname',coupon);
+    const couponFound = await Coupon.findOne({couponName:coupon})
+    if(couponFound){
+      couponAmount = couponFound.maximumDiscount;
+      couponAmountForOne = Math.floor( couponAmount / cart.length);
+       //adding used coupon into user 
+    }
+
     if (hmac == payment.razorpay_signature) {
       const orderTopush = [];
       for (let i = 0; i < cart.length; i++) {
         let order = {
           product_id: cart[i].product_id,
           count: cart[i].count,
-          price: cart[i].price * cart[i].count,
+          price:( cart[i].price * cart[i].count) - couponAmountForOne,
           address: selectedAddress.address[0],
           payment: "Online",
           orderStatus: 1,
           orderDate: new Date(),
         };
         orderTopush.push(order);
+
+       
 
         //reducing the stock
         await Product.findByIdAndUpdate(cart[i].product_id, {
@@ -269,7 +314,10 @@ exports.verifyPayment = async (req, res) => {
         user,
         orders: orderTopush,
       });
-
+      if(couponFound){
+        //adding used coupon into user 
+        await Coupon.updateOne({couponName:coupon},{$set:{usedUser:user}})
+    }
       await newOrder.save();
 
       await Cart.updateOne({ user }, { $set: { product: [] } });
@@ -362,9 +410,10 @@ exports.loadWallet = async (req, res) => {
       }
     }
 
+
     //wallet
     let walletFound = await User.findById(user);
-    // const wallet = walletFound.wallet;
+    const wallet = walletFound.wallet;
     const walletHistory = walletFound.walletHistory;
     // console.log(walletHistory);
 
@@ -484,26 +533,6 @@ exports.ordersAndReturns = async (req, res, next) => {
 
 //view order details in user side
 
-// exports.viewDetailsUser = async (req, res, next) => {
-//   try {
-//     const id = req.query.id;
-//     console.log(id);
-//     const order = await Order.findOne({ "orders._id": id }).populate(
-//       "orders.product_id"
-//     );
-
-//     const orderFound = order.orders.find(
-//       (orderItem) => orderItem._id.toString() === id
-//     );
-//     console.log("orderfound", orderFound);
-
-//     res.render("orderDetails", { orderFound });
-//     // console.log(selectedOrder);
-//   } catch (error) {
-//     console.log(error);
-//     next(error);
-//   }
-// };
 exports.viewDetailsUser = async (req, res, next) => {
   try {
 
@@ -589,10 +618,11 @@ exports.loadCheckOut = async (req, res, next) => {
      const coupons = await Coupon.find({})
     // console.log('coupons',coupons);
     let  total;
-   
+    let discount =0
     const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
     console.log('couponFound',couponFound);
     if(couponFound){
+        discount = couponFound.maximumDiscount;
         total =subTotal- couponFound.maximumDiscount
     }else{
         total = subTotal
@@ -610,7 +640,8 @@ exports.loadCheckOut = async (req, res, next) => {
       cartCount,
       walletAmount,
       walletApplied,
-      total
+      total,
+      discount
     });
   } catch (error) {
     console.log(error);
@@ -618,28 +649,62 @@ exports.loadCheckOut = async (req, res, next) => {
   }
 };
 
-//applying wallet
+// //applying wallet
+// exports.applyWallet = async (req, res) => {
+//   try {
+//     const action = req.query.action;
+//     const user = req.session.userId;
+//     console.log(action);
+//     const cartData = await Cart.findOne({ user }).populate(
+//       "product.product_id"
+//     );
+//     let subTotal = cartData?.product.reduce((acc, item) => {
+//       const totalItem = item.price * item.count;
+//       return acc + totalItem;
+//     }, 0);
+//     if (action == "USE") {
+//       console.log(user);
+//       const userDetails = await User.findById(user)
+//       console.log(userDetails);
+//       // const x = userDetails.wallet
+//       // console.log("user walet",x);
+//       // let total = subTotal - wallet;
+//       await User.findByIdAndUpdate(user, { $set: { walletApplied: true } });
+//       res.json({ success: true, message: "wallet applied", total });
+//     } else if (action == "REMOVE") {
+//       await User.findByIdAndUpdate(user, { $set: { walletApplied: false } });
+//       res.json({ success: true, message: "wallet removed", subTotal });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 exports.applyWallet = async (req, res) => {
   try {
     const action = req.query.action;
-    const user = req.session.userId;
+    const userId = req.session.userId;
     console.log(action);
-    const cartData = await Cart.findOne({ user }).populate(
+    const user = await User.findById(userId); // Fetch the user
+    console.log("user wallet", user.wallet);
+
+    const cartData = await Cart.findOne({ user: userId }).populate(
       "product.product_id"
     );
     let subTotal = cartData?.product.reduce((acc, item) => {
       const totalItem = item.price * item.count;
       return acc + totalItem;
     }, 0);
+
     if (action == "USE") {
-      console.log(user);
-      await User.findByIdAndUpdate(user, { $set: { walletApplied: true } });
+      const total = subTotal - user.wallet; // Subtract wallet from subTotal
+      await User.findByIdAndUpdate(userId, { $set: { walletApplied: true } });
       res.json({ success: true, message: "wallet applied", total });
     } else if (action == "REMOVE") {
-      await User.findByIdAndUpdate(user, { $set: { walletApplied: false } });
-      res.json({ success: true, message: "wallet removed", total });
+      await User.findByIdAndUpdate(userId, { $set: { walletApplied: false } });
+      res.json({ success: true, message: "wallet removed", subTotal });
     }
   } catch (error) {
     console.log(error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

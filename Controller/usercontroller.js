@@ -311,7 +311,6 @@ exports.LoadHome = async (req, res, next) => {
     const product = await Product.find({}).sort({ addedDate: -1 }).limit(9);
 
     const user = req.session.userId;
-    console.log(user);
 
     //getting cart product count
     let cartCount = 0;
@@ -380,19 +379,17 @@ if (user) {
       { category: { $in: categorySelected } },
       { _id: 1 }
     );
-    console.log("categoryFind",categoryFind);
 
     if (!categoryFind.length) {
       categoryFind = await Category.find({}, { _id: 1 });
     }
 
     let categoryStrings = categoryFind.map((val) => val._id.toString());
-    console.log(categoryStrings);
     let categoryToFront = req.query.category || "";
 
     //brands filter
     //for db search
-    let brandSelected = req.query.brand || category[0].brands;
+    let brandSelected = req.query.brand || category[0]?.brands;
     //for front end check box selection
     let brandsToFront = req.query.brand || "";
 
@@ -410,6 +407,7 @@ if (user) {
     //search filter
     let search = req.query.search || ''
 
+    console.log("categoryFind",categoryFind);
 
     //pagination
     let limit = 6;
@@ -443,7 +441,7 @@ if (user) {
       products,
       category,
       wishlist,
-      brands: category[0].brands,
+      brands: category[0]?.brands,
       brandsToFront,
       categoryToFront,
       search,
@@ -514,6 +512,25 @@ const similarProduct = await Product.find({
 
 // console.log('id',singleProduct._id)
 //review
+
+
+    // Finding the specific order
+    // const order = await Order.findOne(
+    //   {
+    //     user,
+    //     orders: { $elemMatch: { _id: id } },
+    //   },
+    //   { "orders.$": 1 }
+    // ).populate('orders.product_id');
+
+    // console.log('order',order);
+    
+    // const orderFound = order.orders.find(
+    //   (orderItem) => orderItem._id.toString() === id
+    // );
+
+
+
 console.log('singleP',singleProduct._id)
 const review = await Review
   .findOne({ product_id: singleProduct._id })
@@ -529,6 +546,7 @@ console.log('reviews', review);
         cartCount,
         similarProduct,
         review,    
+        // orderFound
       });
     }
   } catch (error) {

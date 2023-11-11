@@ -175,12 +175,12 @@ exports.loadProduct = async (req,res,next)=>{
 //   //edit Product
 exports.editProduct = async (req,res)=>{
   try {
+    console.log("errrr");
     const id = req.body.id;
     console.log("id for edit product "+id);
     const {productname,categoryname,brandname,actualprice,sellingprice,stocks,Description}=req.body;
     const image = req.files
-    console.log(image,productname,categoryname,brandname,actualprice,sellingprice,stocks,Description);
-   console.log(Description);
+   console.log(image);
 
   const updateData = {
     $set: {

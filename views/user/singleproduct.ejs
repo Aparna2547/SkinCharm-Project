@@ -119,19 +119,20 @@
                                     </div>
                                     <div class="product__details__tab__content__item col-6">
                                         <!-- <div class="col-md-9 p-2"> -->
-                                        <div class=""></div>
+                                            
+                                         
                                         <% if(review && review.reviews && review.reviews.length){ %>
                                             <% review.reviews.forEach((rev,index)=>{ %>
-                                                <h6 class="fw-bold m-1 text-muted">
+                                                <h6 class="fw-bold  text-muted">
                                                     <%=rev.user_id.username%>
                                                 </h6>
-                                                <div class="d-flex m-1">
+                                                <div class="d-flex my-1">
 
                                                     <%const date=new Date(rev.date);%>
                                                         <%const options={ month: 'short' , day: 'numeric' ,
                                                             year: 'numeric' }; const
                                                             formattedDate=date.toLocaleDateString('en-US', options); %>
-                                                            <p class="border rounded-pill p-1 mx-1 text-white fw-bold ms-2"
+                                                            <p class="border rounded-pill  text-white fw-bold px-2"
                                                                 style="width:3rem; background-color: rgb(15, 187, 15);">
                                                                 <%= rev.rating %> <b><i class="fa-solid fa-star"></i></b>
                                                             </p>
@@ -225,9 +226,8 @@
 
 
 
-
-        <script src="/user/js/imageSelect.js"></script>
-        <script src="/user/js/imageZoom.js"></script>
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
+<script src="/user/js/rating.js"></script>
 
         <%- include("./footer.ejs") -%>

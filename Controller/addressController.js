@@ -38,16 +38,17 @@ exports.shippingAddress = async (req,res,next)=>{
          const coupons = await Coupon.find({})
         // console.log('coupons',coupons);
         let  total;
-       
+       let discount = 0
         const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
         console.log('couponFound',couponFound);
         if(couponFound){
+            discount = couponFound.maximumDiscount;
             total =subTotal- couponFound.maximumDiscount
         }else{
             total = subTotal
         }
     
-        res.render('shippingAddress',{addressData,subTotal,cartCount,total})
+        res.render('shippingAddress',{addressData,subTotal,cartCount,total,discount})
             
     } catch (error) {
         console.log(error);
@@ -160,7 +161,7 @@ exports.editAddress = async (req,res)=>
     }
 }
 
-//delete address -profile side side
+//delete address -cart side side
 exports.deleteCartAddress = async(req,res,next)=>{
     try {
         const user = req.session.userId
@@ -234,7 +235,7 @@ exports.addressload = async (req,res,next)=>{
     }  
   }
 
-
+//ADDRESS IN PROFILE PAGE
   
 
 //editAddress profile
@@ -287,7 +288,18 @@ exports.editAddressProfile = async (req,res)=>{
   //Address in profile
   exports.addAddressProfileLoad = async (req,res,next)=>{
     try {
-        res.render('profile')
+        const user = req.session.userId;
+
+        //getting cart product count
+        let cartCount = 0;
+        if (user) {
+          const cart = await Cart.findOne({ user });
+          // Assuming you want to calculate cartCount based on the user's cart items
+          if (cart) {
+            cartCount = cart.product.length;
+          }
+        }
+        res.render('addAddressProfile',{cartCount})
     } catch (error) {
         console.log(error);
         next(error)

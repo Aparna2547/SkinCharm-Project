@@ -114,14 +114,14 @@ userRoute.get('/deleteCartAddress',userAuth.isLogin,addressController.deleteCart
 
 
 //add address in get in profilepage
-userRoute.get('/addAddress',addressController.addAddressProfileLoad)
+userRoute.get('/addAddress',userAuth.isLogin,addressController.addAddressProfileLoad)
 
 //add address - post in profile
 userRoute.post('/addAddress',addressController.addAddressProfile)
 
 //edit cart addres in cart side
 userRoute.get('/editCartAddress',userAuth.isLogin,addressController.editCartAddressLoad)
-userRoute.post('/editAddress',addressController.editAddress)
+userRoute.post('/editCartAddress',addressController.editAddress)
 
 //delete address
 userRoute.get('/deleteAddress',userAuth.isLogin,addressController.deleteAddress)

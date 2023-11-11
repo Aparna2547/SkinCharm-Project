@@ -39,16 +39,18 @@ exports.loadCart = async (req,res,next)=>{
     const coupons = await Coupon.find({})
         // console.log('coupons',coupons);
         let  total;
+        let discount =0;
        
         const couponFound = await Coupon.findOne({couponName:cartData?.isCouponApplied})
         console.log('couponFound',couponFound);
         if(couponFound){
+            discount = couponFound.maximumDiscount
             total =subTotal- couponFound.maximumDiscount
         }else{
             total = subTotal
         }
-    
-        res.render('cart',{cartData,total,context,coupons,couponFound,subTotal,cartCount})
+    console.log('discount',discount)
+        res.render('cart',{cartData,total,context,coupons,couponFound,subTotal,cartCount,discount})
        console.log("rendering cartpage");
     } catch (error) {
         console.log(error);

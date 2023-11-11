@@ -76,7 +76,7 @@ adminRoute.get('/addProduct',productController.loadAddProduct)
 
 //edit Product
 adminRoute.get('/editProduct',adminauth.isadminLogin,productController.loadProduct)
-adminRoute.post('/editProduct',multerMid.upload.array('image',4),productController.editProduct)
+adminRoute.post('/editProductPost',multerMid.upload.array('image',3),productController.editProduct)
 
 //delete image in edit product
 adminRoute.get('/deleteImg',productController.deleteProductImg)

@@ -121,26 +121,29 @@ exports.getCoupon = async (req,res)=>{
         //checks if the coupon is already used by the user  
         const usedUser = await Coupon.findOne({couponName:coupon,usedUser:{$in:[user]}})
         console.log(usedUser);
-        if(couponFound.expiryDate < date){
-            res.json({message:'Coupon Expired'})
+        if(usedUser){
+            res.json({success:false,message:"Coupon is already used by the user"})
         }
-        else if(usedUser){
-            res.json({message:'User already used the coupon'})
+       else if(couponFound?.expiryDate < date){
+            res.json({success:false,message:'Coupon Expired'})
         }
+        // else if(usedUser){
+        //     res.json({message:'User already used the coupon'})
+        // }
         else if(couponFound){
             if(totalAmount < couponFound.minimumPurchase){
-                res.json({message:'Less amount to apply'})
+                res.json({success:false,message:'Less amount to apply'})
             }
             else{
                 await Cart.findOneAndUpdate({user},{$set:{isCouponApplied:coupon}})
                 totalAmount = totalAmount - couponFound.maximumDiscount
-                res.json({message:'Coupon applied',maxDiscount:couponFound.maximumDiscount,totalAmount})
+                res.json({success:true,message:'Coupon applied',maxDiscount:couponFound.maximumDiscount,totalAmount})
 
-                await Coupon.updateOne({couponName:coupon},{$set:{usedUser:user}})
+                // await Coupon.updateOne({couponName:coupon},{$set:{usedUser:user}})
             }
         }
         else{
-            res.json({message:'Invalid coupon'})
+            res.json({success:false,message:'Invalid coupon'})
         }
 
     }catch (error) {

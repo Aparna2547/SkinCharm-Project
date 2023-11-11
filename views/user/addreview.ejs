@@ -14,41 +14,20 @@
                 <!-- <label for="">Ratings:</label>
                 <input type="number" name="rating" class="form-control" placeholder="out of 10"> -->
                 <div class="rating-box border-bottom border-secondary">
-                    <div class="stars">
-                        <% if(reviewFound){%>
-                        <% for(let i=1;i<=5;i++){%>
-                        <i class="fa-solid fa-star <% if(reviewFound.reviews[0].rating >= i){%>active<%} %>" data-value="<%= i %>"></i>
-                        <%}%>
-                    </div>
-                    <input type="hidden" id="selectedValue" name="selectedValue" value="">
-                    <div style="width: 20rem;">
-                        <h6 class="fw-bold mt-2">Review this product</h6>
-                        <input type="text" name="rating" id="rating" placeholder="Out of 5"  class="form-control my-1 container-fluid">
-                        <textarea name="review" id="review" cols="50" rows="7"><%= reviewFound.reviews[0].review %></textarea>
-                    </div>
-                    <button class="btn btn-secondary fw-bold mb-2" type="submit">SUBMIT</button>
-                    <% }else{%>
-                        <% for(let i=1;i<=5;i++){%>
-                            <i class="fa-solid fa-star" data-value="<%= i %>"></i>
-                            <%}%>
-                        </div>
-                        <input type="hidden" id="selectedValue" name="selectedValue" value="">
+               
                         <div style="width: 20rem;">
                             <h6 class="fw-bold mt-2">Review this product</h6>
                             <input type="text" name="rating" id="rating" placeholder="Out of 5">
                             <textarea name="review" id="review" cols="30" rows="7"></textarea>
                         </div>
-                        <buttontype="submit" class="btn btn-primary">SUBMIT</buttontype=>
-                    <%} %>
+                        <button type="submit" class="btn btn-primary">SUBMIT</button>
+                  
                 </div>        
-                <!-- <label for="">Add a post</label><br>    
-                <textarea name="review" id="review" cols="30" rows="7"></textarea><br>
-                <button type="submit" class="btn btn-primary">submit</button> -->
           </form>
         </div>
     </div>
 </section>
 
-<script src="/user/js/addressvalidate.js"></script>
+<!-- <script src="/user/js/addressvalidate.js"></script> -->
 
-<script src="/user/js/rating.js"></script>
+<!-- <script src="/user/js/rating.js"></script> -->

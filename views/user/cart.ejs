@@ -115,19 +115,24 @@
                 </div>
                 <div class="col-lg-4">
                     <h5 class="fw-bold">Coupon</h5>
-                    <div class="cart__discount d-flex">
+                    <div class="cart__discount d-flex jsutify-content-around">
                         <% if(couponFound){ %>
-                            <div class="form-control"><%=couponFound.couponName%>
+                            <div class="form-control w-75 bg-secondary text-white fw-bold mt-2"><%=couponFound.couponName%> Applied
                             </div>
-                            <button id="couponRemove" onclick="removeCoupon()"> <i class="fa fa-trash-o" style="font-size:24px"></i> </button>
+                            <button  id="couponRemove" onclick="removeCoupon()"  style="background-color: #E80071;" class="form-control w-25 text-white mt-2" >close</button>
+
+
+                            <!-- <button id="couponRemove" onclick="removeCoupon()"> <i class="fa fa-trash-o" style="font-size:24px"></i> </button> -->
                             <% }else{ %>
                         <form id="couponApply" class="w-100">
                             <!-- <form action="/applyCoupon" method="post"> -->
                             <input type="text" id="couponInput" placeholder="Coupon code" name="coupon" class="form-control w-75">
                             <button type="submit" id="couponApplybtn" style="background-color: #E80071;" class="form-control w-25 text-white ">Apply</button>
                         </form>
+                       
                         <% } %>
                     </div>
+                    <p id="errorMessageCoupon"></p>
                     
                     <div class="border border-1 p-1 mt-4" style="overflow: auto;max-height: 300px;">
                  
@@ -146,6 +151,9 @@
                         <h6 class="text-center  mb-2">Cart total</h6>
                         <ul>
                             <li  class="fw-bold">Subtotal <span id="subTotal">₹<%=subTotal %></span></li>
+                            <li  class="fw-bold">Discount <span id="discount">₹<%=discount %></span></li>
+
+        
                             <hr>
                             <li class="fw-bold">Total <span id="total">₹<%=total %></span></li>
                            

@@ -4,6 +4,7 @@ $(document).ready(function () {
 
         // Get the coupon code from the input field
         const coupon = $('input[name="coupon"]').val();
+        const errorMessage = document.getElementById('errorMessageCoupon')
 
         // Send an AJAX request to your /getCoupon endpoint
         $.ajax({
@@ -12,15 +13,12 @@ $(document).ready(function () {
             data: { coupon: coupon },
             success: function (response) {
                 // Handle the response from the server
-                if (response.message === 'Coupon applied') {
-                    // Coupon applied successfully
-                    alert('Coupon applied successfully!');
-                    // You can also update the UI with the maxDiscount and totalAmount
-                    $('#maxDiscount').text(response.maxDiscount);
-                    $('#totalAmount').text(response.totalAmount);
+                console.log(response)
+                if (response.success) {
+                    location.reload()
                 } else {
-                    // Handle other response messages accordingly
-                    alert(response.message);
+                    console.log(response.message,errorMessage)
+                    errorMessage.textContent = response.message
                 }
             },
             error: function (error) {

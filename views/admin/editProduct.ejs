@@ -111,7 +111,7 @@
                                         <%= message %>
                                     </h2>
                                     <% } %>
-                                        <form action="/admin/editProduct" method="post" id="editformId"
+                                        <form action="/admin/editProductPost" method="post" id="editformId"
                                             enctype="multipart/form-data">
 
                                         <!-- id input -->
@@ -196,7 +196,7 @@
                                                     <%}%>
                                                 </div>
                                             <%}else{%>  
-                                                <input style="width: 10rem;" type="file" name="image" id="image" class="form-control" />
+                                                <input style="width: 10rem;" type="file" name="image" id="image<%=i+1%>" class="form-control" />
                                             <% }}%>    
                                             </div>
                                             </div>

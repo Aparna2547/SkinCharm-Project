@@ -44,7 +44,7 @@
                                             <div class="container">
                                                 <div class="row">
 
-                                                    <%brands.forEach(brand=>{ %>
+                                                    <%brands?.forEach(brand=>{ %>
                                                         <div class="col-md-12 d-flex align-items-center">
                                                             <input <%=brandsToFront.includes(brand) && 'checked'  %> type="checkbox" name="brand" value="<%=brand%>">
                                                             <p class="fs-7 ms-1 fw-bold" style="text-transform: capitalize;">
