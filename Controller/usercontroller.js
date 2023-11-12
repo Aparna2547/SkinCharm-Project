@@ -308,7 +308,7 @@ exports.LoadHome = async (req, res, next) => {
   try {
     const category = await Category.find({ isListed: true });
     const banner = await Banner.findOne({});
-    const product = await Product.find({}).sort({ addedDate: -1 }).limit(9);
+    const product = await Product.find({isListed:true}).sort({ addedDate: -1 }).limit(9);
 
     const user = req.session.userId;
 
@@ -506,7 +506,7 @@ exports.singleProduct = async (req, res, next) => {
  
 const similarProduct = await Product.find({
   category: selectedCategory,
-  _id: { $ne: singleProduct._id } // Exclude the current product
+  _id: { $ne: singleProduct._id },isListed:true // Exclude the current product
 }).limit(4);
 // console.log("related products", similarProduct);
 
