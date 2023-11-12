@@ -29,7 +29,8 @@
                             <%=singleProduct.category.category %>
                         </p>
                         <h2 class="text-dark fs-4">₹<%=singleProduct.sellingPrice%>&nbsp;<strike class="text-danger">₹
-                                    <%=singleProduct.actualPrice%></strike></h2>
+                                    <%=singleProduct.actualPrice%>
+                                </strike></h2>
 
                     </div>
                     <!-- <button class="btn btn-primary w-25">Add to Cart</button> -->
@@ -103,24 +104,29 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="tabs-6" role="tabpanel">
-                                <div class="product__details__tab__content row">
+                                <div class="row">
+                                
+
                                     <div class="col-6">
                                         <div class="m-3 mb-0 mt-4 border-secondary border-bottom border-top ">
                                             <div class=" p-1">
                                                 <h5 class="fw-bold">RATINGS <i class="fa fa-light fa-star"></i></h5>
                                             </div>
                                             <div class="d-flex">
-                                                <div class="m-3 ms-5 d-flex flex-column justify-content-center">
+                                                <div class="ms-5 d-flex flex-column justify-content-center">
                                                     <h1><i class="fa-solid fa-star" style="color: #a4a5a8;"></i></h1>
                                                     <h5> Verified buyers</h5>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
+                                            
                                     </div>
+
                                     <div class="product__details__tab__content__item col-6">
                                         <!-- <div class="col-md-9 p-2"> -->
-                                            
-                                         
+
+
                                         <% if(review && review.reviews && review.reviews.length){ %>
                                             <% review.reviews.forEach((rev,index)=>{ %>
                                                 <h6 class="fw-bold  text-muted">
@@ -134,7 +140,8 @@
                                                             formattedDate=date.toLocaleDateString('en-US', options); %>
                                                             <p class="border rounded-pill  text-white fw-bold px-2"
                                                                 style="width:3rem; background-color: rgb(15, 187, 15);">
-                                                                <%= rev.rating %> <b><i class="fa-solid fa-star"></i></b>
+                                                                <%= rev.rating %> <b><i
+                                                                            class="fa-solid fa-star"></i></b>
                                                             </p>
                                                             <p class="text-muted">Posted on <%= formattedDate %>
                                                             </p>
@@ -150,13 +157,11 @@
                                                         <div>
                                                             <h4 class="m-3">no reviews</h4>
                                                         </div>
-                                                        <% } %>
-                                    </div>
-                                    <!-- </div> -->
-                                    <div class="product__details__tab__content__item col-6">
+                                                    <% } %>
+                                        </div>
 
-                                    </div>
                                 </div>
+                                
 
                             </div>
 
@@ -225,7 +230,7 @@
 
         <%- include("./footer.ejs") -%>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="/user/js/rating.js"></script>
-        <script src="/user/js/imageZoom.js"></script>
-        <script src="/user/js/imageSelect.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="/user/js/rating.js"></script>
+            <script src="/user/js/imageZoom.js"></script>
+            <script src="/user/js/imageSelect.js"></script>

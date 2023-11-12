@@ -13,13 +13,13 @@ formId.addEventListener('submit',(event)=>{
     const password = passwordInput.value
     const c_password = c_passwordInput.value;
 
-    if(username.length == 0){
+    if(username.trim().length <3 ){
         event.preventDefault()
         errorMessage.textContent="Please enter the name";
-    }else if(mobile.length!==10 && typeof(mobile)!=Number){
+    }else if(mobile.trim().length!==10 && typeof(mobile)!=Number){
         event.preventDefault();
         errorMessage.textContent="Enter a valid number"
-    }else if(password.length ==0){
+    }else if(password.trim().length ==0){
         event.preventDefault()
         errorMessage.textContent = "password must minimum 4 character"
     }

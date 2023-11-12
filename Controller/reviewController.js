@@ -43,15 +43,12 @@ console.log('reviews', reviewFound);
 //review add review
 exports.addReview = async(req,res)=>{
     try {
-        console.log("add review page");
         const user = req.session.userId;
-        const rating = req.body.rating;
+        const rating = req.body.selectedValue;
         const review = req.body.review;
         const productId = req.session.productId;
-        console.log('productId',productId);
         
         const reviewFound = await Review.findOne({ product_id: productId });
-        console.log(reviewFound);
         
         if (!reviewFound) {
           const data = new Review({
@@ -77,10 +74,7 @@ exports.addReview = async(req,res)=>{
           });
         }
         
-        console.log("review added..");
-        // res.redirect(`orderDetails?id=${productId}`);
         res.redirect('/orders&returns')
-        // res.redirect(`/singleProductpage?id=${productId}`)
     } catch (error) {
       console.log(error.message);
     }

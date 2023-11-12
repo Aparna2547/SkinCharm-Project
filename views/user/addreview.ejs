@@ -1,33 +1,52 @@
 
 <%- include('./head.ejs') %>
+<style>
+    body {
+      background-image: url('/user/assets/skincare.jpg'); /* Replace with the actual path to your image file */
+      background-size: cover; /* This will cover the whole background */
+      background-position: center; /* Center the image */
+      background-repeat: no-repeat; /* Do not repeat the image */
+    }
+  </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-xw9kuQmP42ZKpNOav5ggnZ1Q6+7U/uM3W1z77V5Mnpmy+lhixZL4mrsQ11cf9JDsl5H1NvLxDLswn+o96kL3Dg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
- 
 
-<section class="container ">
+<section class="container">
+
     <div class="text-center container mt-5" id="login">
         <div class="container pt-3 pb-3" id="frm-block">
             <div class="title pb-3">
-                <h6 class="fw-bold pt-2">ADD A POST ABOUT THE PRODUCT </h6>
+                <h5 class="fw-bold pt-2">ADD A REVIEW ABOUT THE PRODUCT </h5>
             </div>
             <form action="/addReview" method="post">
                 <!-- <label for="">Ratings:</label>
                 <input type="number" name="rating" class="form-control" placeholder="out of 10"> -->
-                <div class="rating-box border-bottom border-secondary">
+                <div class="rating-box  border-secondary">
+                    
                
-                        <div style="width: 20rem;">
-                            <h6 class="fw-bold mt-2">Review this product</h6>
-                            <input type="text" name="rating" id="rating" placeholder="Out of 5">
-                            <textarea name="review" id="review" cols="30" rows="7"></textarea>
+                        <div style="width: 24rem;">
+                            <div>
+                                <h5 class="text-left">Rate this product</h5>
+                                <div class="stars pb-4 pt-1">    
+                                    <% for(let i=1;i<=5;i++){%>
+                                    <i class="fa-solid fa-star" data-value="<%= i %>"></i>
+                                    <%}%>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedValue" name="selectedValue" value="">
+
+                            <!-- <input type="text" name="rating" id="rating" placeholder="  Out of 5" class="mb-2 w-100"> -->
+                            <textarea name="review" id="review" cols="49" rows="7" placeholder="Enter your review"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">SUBMIT</button>
+                        <button type="submit" class="btn btn-secondary">SUBMIT</button>
                   
                 </div>        
           </form>
         </div>
     </div>
 </section>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/user/js/rating.js"></script>  
 <!-- <script src="/user/js/addressvalidate.js"></script> -->
 
 <!-- <script src="/user/js/rating.js"></script> -->

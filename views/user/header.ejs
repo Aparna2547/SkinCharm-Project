@@ -3,7 +3,14 @@
     <div class="offcanvas__nav__option">
         
         
-        <a href="/cart"><i class="fa fa-shopping-cart text-dark" style="font-size:24px;"></i> </a>
+        <a href="/cart"><i class="fa fa-shopping-cart text-dark" style="font-size:24px;"></i> 
+            <% if (cartCount !== undefined && cartCount !== 0) { %>
+                <span class="position-absolute text-white top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                        <%=cartCount  %>
+                </span>
+                <% } %>
+        </a>
+        
         <a href="/wishlist"><i class="fa fa-heart text-dark" style="font-size:24px;"></i> </a>
         <a href="/Profile"><i class="fa fa-user text-dark" style="font-size:24px;"></i> </a>
      
