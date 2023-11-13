@@ -71,16 +71,13 @@ exports.addToCart = async (req,res)=>{
             req.app.locals.specialContext = "Please Login"
           return res.redirect('/login')
         }
-       // console.log("user "+user);
 
        //get the id by the query in a tag
         const productId = req.query.productId;
-      //  console.log(productId);
         
 
       //finding the product by the product
         const product = await Product.findById(productId)
-        //console.log("product of the yaearjosgio ................"+ product);
 
 
         //find the user already exist in the cart
@@ -193,11 +190,9 @@ exports.addToCartWishlist = async (req,res,next)=>{
         }
             //get the id by the query in a tag
             const productId = req.query.productId;
-              console.log(productId);
         
       //finding the product by the product
       const product = await Product.findById(productId)
-      //console.log("product of the yaearjosgio ................"+ product);
       
         //find the user already exist in the cart
         let userFound = await Cart.findOne({user})

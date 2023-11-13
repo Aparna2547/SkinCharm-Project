@@ -8,8 +8,6 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
-const { log } = require("console");
-const { totalmem } = require("os");
 const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
 
 ///for razorpay
@@ -278,7 +276,7 @@ exports.verifyPayment = async (req, res) => {
 
 
     //getting coupon divinding for each product
-    let couponAmount =0, couponAmountForOne
+    let couponAmount =0, couponAmountForOne=0
     const coupon = cartData.isCouponApplied;
     console.log('couponname',coupon);
     const couponFound = await Coupon.findOne({couponName:coupon})
@@ -301,14 +299,14 @@ exports.verifyPayment = async (req, res) => {
           orderDate: new Date(),
         };
         orderTopush.push(order);
-
-       
+       console.log(order.price)
 
         //reducing the stock
         await Product.findByIdAndUpdate(cart[i].product_id, {
           $inc: { stock: -cart[i].count },
         });
       }
+
 
       let newOrder = await new Order({
         user,
