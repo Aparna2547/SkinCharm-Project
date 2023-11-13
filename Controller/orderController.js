@@ -276,7 +276,7 @@ exports.verifyPayment = async (req, res) => {
 
 
     //getting coupon divinding for each product
-    let couponAmount =0, couponAmountForOne=0
+    let couponAmount = 0, couponAmountForOne = 0
     const coupon = cartData.isCouponApplied;
     console.log('couponname',coupon);
     const couponFound = await Coupon.findOne({couponName:coupon})
@@ -299,7 +299,6 @@ exports.verifyPayment = async (req, res) => {
           orderDate: new Date(),
         };
         orderTopush.push(order);
-       console.log(order.price)
 
         //reducing the stock
         await Product.findByIdAndUpdate(cart[i].product_id, {
@@ -372,7 +371,6 @@ exports.cancelOrder = async (req, res, next) => {
     let totalAmt = order.orders[0].price;
     console.log("total amount", totalAmt);
     let payment = order.orders[0].payment;
-    console.log("payment", payment);
 
     //setting amount into wallet credit
     if (payment == "Online" || payment == "Wallet") {
